@@ -1,6 +1,7 @@
 # Maintainer: Jonne Haß <me@mrzyx.de>
 pkgbase=diaspora
-pkgname=('diaspora-mysql' 'diaspora-postgresql')
+pkgname=diaspora
+true && pkgname=('diaspora-mysql' 'diaspora-postgresql')
 pkgver=0.0.3.0
 pkgrel=1
 pkgdesc="A distributed privacy aware social network"
