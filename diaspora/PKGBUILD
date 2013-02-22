@@ -108,17 +108,17 @@ _package() {
 }
 
 package_diaspora-mysql() {
-  pkgdesc="$pkgdesc (MySQL)"
-  depends=($depends 'libmysqlclient')
-  conflicts=($conflicts 'diaspora-postgresql')
+  true && pkgdesc="$pkgdesc (MySQL)"
+  true && depends=($depends 'libmysqlclient')
+  true && conflicts=($conflicts 'diaspora-postgresql')
 
   _package mysql
 }
 
 package_diaspora-postgresql() {
-  pkgdesc="$pkgdesc (PostgreSQL)"
-  depends=($depends 'postgresql-libs')
-  conflicts=($conflicts 'diaspora-mysql')
+  true && pkgdesc="$pkgdesc (PostgreSQL)"
+  true && depends=($depends 'postgresql-libs')
+  true && conflicts=($conflicts 'diaspora-mysql')
 
   _package postgres
 }
