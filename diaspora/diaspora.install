@@ -2,9 +2,11 @@ dusr=diaspora
 dhome=/usr/share/webapps/diaspora
 dlog=/var/log/diaspora
 detc=/etc/webapps/diaspora
+ddata=/var/lib/diaspora
+dtmp=/tmp/diaspora
 
 _chown() {
-  chown -R $dusr:$dusr $dhome $dlog $detc
+  chown -R $dusr:$dusr $dhome $dlog $detc $ddata $dtmp
 }
 
 ## arg 1:  the new package version

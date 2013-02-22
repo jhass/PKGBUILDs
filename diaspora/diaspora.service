@@ -8,4 +8,4 @@ WorkingDirectory=/usr/share/webapps/diaspora
 ExecStart=/bin/bash -lc ./script/server
 Restart=always
 StandardInput=null
-KillMode=process
+KillMode=control-group

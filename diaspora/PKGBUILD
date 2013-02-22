@@ -11,16 +11,21 @@ depends=('ruby' 'ruby-bundler' 'redis' 'imagemagick' 'libxslt')
 makedepends=('git' 'libmysqlclient' 'postgresql-libs' 'nodejs')
 conflicts=('diaspora-git' 'diaspora-mysql-git' 'diaspora-postgresql-git')
 options=(!strip)
-install=$pkgbase.install
-source=($pkgbase-$pkgver.tar.gz::https://github.com/$pkgbase/$pkgbase/tarball/v$pkgver
-        $pkgbase.install
-        $pkgbase.service
-        $pkgbase.bashrc)
+backup=("etc/webapps/$pkgbase/diaspora.yml"
+        "etc/webapps/$pkgbase/database.yml"
+        "etc/webapps/$pkgbase/secret_token.rb")
+install="$pkgbase.install"
+source=("$pkgbase-$pkgver.tar.gz::https://github.com/$pkgbase/$pkgbase/tarball/v$pkgver"
+        "$pkgbase.install"
+        "$pkgbase.service"
+        "$pkgbase.bashrc"
+        "git_availbility.patch")
 
 md5sums=('6df476b6b66eb8213287e59e444aefe0'
-         '42d2deb42614c6f3737ce925fad4fda2'
-         '2c2b409ee495c295c09172aa4dd063ee'
-         'a543b59c73b8a477b568d114500a8bd5')
+         'e9fc25b30f484b9a3cab77ef04747e9f'
+         '8e4e2ae22c02d3b69ce6e732bad1d9c8'
+         'a543b59c73b8a477b568d114500a8bd5'
+         '061945f60e6c46d86c976efe289ec02e')
 
 build() {
   cd $srcdir/$pkgbase-$pkgbase-*  
@@ -37,6 +42,9 @@ _package() {
 
   cd $_srcdir
 
+  msg "Applying patches"
+  patch -p1 < $srcdir/git_availbility.patch
+
   msg "Bundle dependencies"
   echo "install: --no-rdoc --no-ri" > $_srcdir/.gemrc
   echo "update: --no-rdoc --no-ri" >> $_srcdir/.gemrc
@@ -52,8 +60,6 @@ _package() {
 
   msg "Copy contents to package directory"
   install -dm755 $pkgdir/usr/share/webapps/$pkgbase
-  install -dm755 $pkgdir/usr/share/webapps/$pkgbase/public/uploads
-  install -dm755 $pkgdir/var/lib/$pkgbase/uploads
   cp -Rf $_srcdir/* $pkgdir/usr/share/webapps/$pkgbase/
   cp -Rf $_srcdir/.bundle $pkgdir/usr/share/webapps/$pkgbase/
   install -Dm644 $_srcdir/.gemrc $pkgdir/usr/share/webapps/$pkgbase/.gemrc
@@ -86,13 +92,18 @@ _package() {
       $pkgdir/usr/lib/systemd/system/$pkgbase.service
 
   msg "Create symlinks"
-  install -dm755 $pkgdir/var/log/diaspora
-  ln -s  /var/log/$pkgbase/ $pkgdir/usr/share/webapps/$pkgbase/log
+  install -dm755 $pkgdir/var/log/$pkgbase
+  install -dm755 $pkgdir/tmp/$pkgbase
+  install -dm755 $pkgdir/var/lib/$pkgbase/uploads
+  rm -Rf $pkgdir/usr/share/webapps/$pkgbase/log \
+         $pkgdir/usr/share/webapps/$pkgbase/tmp \
+         $pkgdir/usr/share/webapps/$pkgbase/public/uploads
   ln -s  /etc/webapps/$pkgbase/diaspora.yml    $pkgdir/usr/share/webapps/$pkgbase/config/diaspora.yml
   ln -s  /etc/webapps/$pkgbase/database.yml    $pkgdir/usr/share/webapps/$pkgbase/config/database.yml
   ln -sf /etc/webapps/$pkgbase/secret_token.rb $pkgdir/usr/share/webapps/$pkgbase/config/initializers/secret_token.rb
   ln -sf /var/lib/$pkgbase/uploads             $pkgdir/usr/share/webapps/$pkgbase/public/uploads
-  ln -sf /tmp/diaspora                         $pkgdir/usr/share/webapps/$pkgbase/tmp
+  ln -sf /tmp/$pkgbase                         $pkgdir/usr/share/webapps/$pkgbase/tmp
+  ln -sf /var/log/$pkgbase                     $pkgdir/usr/share/webapps/$pkgbase/log
 }
 
 package_diaspora-mysql() {
