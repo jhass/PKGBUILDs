@@ -34,7 +34,7 @@ build() {
   cd $srcdir/$pkgbase-$pkgbase-*  
   msg "Adjusting shebangs"
   sed -i -e "s/ruby/$_ruby/" \
-    script/get_config.rb
+    script/get_config.rb \
     script/server
   msg "Adjusting calls binaries"
   sed -i -e "s/bundle exec//" \
