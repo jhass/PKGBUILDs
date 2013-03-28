@@ -23,7 +23,7 @@ source=("$pkgbase-$pkgver.tar.gz::https://github.com/$pkgbase/$pkgbase/tarball/v
 
 md5sums=('7f1c501a1500d886ccc1ac0e84e82ba0'
          'e9fc25b30f484b9a3cab77ef04747e9f'
-         'cb5698f22c216bb4d83187bfdb57ca44'
+         'ca79dccc264deb3238d0c8fa97f36d6b'
          '88f6b4b024e0a83bc76fb1bad527b8a3')
 
 build() {
