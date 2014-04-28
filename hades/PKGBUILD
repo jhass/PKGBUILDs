@@ -1,7 +1,7 @@
 # Maintainer: Jonne Hass <me@mrzyx.de>
 pkgname=hades
 pkgver=0.98f
-pkgrel=2
+pkgrel=3
 pkgdesc="Hamburg Design System, a framework for interactive simulation."
 arch=('any')
 url="http://tams-www.informatik.uni-hamburg.de/applets/hades/"
