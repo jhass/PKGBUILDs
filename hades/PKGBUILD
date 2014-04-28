@@ -20,7 +20,7 @@ md5sums=('4f104e2043409d44971eb653a27f9fee'
 
 build() {
   cd "$srcdir"
-  unzip -f "$pkgname.jar" "hades/gui/images/hades.gif" -d ./pixmaps
+  unzip -u "$pkgname.jar" "hades/gui/images/hades.gif" -d ./pixmaps
   convert "pixmaps/hades/gui/images/hades.gif" "pixmaps/$pkgname.png"
 }
 
