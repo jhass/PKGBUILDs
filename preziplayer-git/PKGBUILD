@@ -8,7 +8,7 @@ url="https://github.com/TomFreudenberg/preziplayer"
 license=('unknown')
 arch=('any')
 makedepends=('git')
-depends=('zenity' 'zip' 'unzip' 'weborf')
+depends=('zenity' 'zip' 'unzip' 'weborf' 'bash')
 source=("$pkgname::git://github.com/TomFreudenberg/preziplayer.git")
 
 pkgver () {
