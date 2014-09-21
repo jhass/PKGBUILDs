@@ -1,7 +1,7 @@
 # Maintainer: Jonne Haß <me@mrzyx.de>
 pkgname=boxcars
 pkgver=r59.2e02b6d
-pkgrel=1
+pkgrel=2
 pkgdesc="Easy-to-configure Static Web & Reverse Proxy Server in Go"
 arch=('x86_64' 'i686')
 url="https://github.com/azer/boxcars"
@@ -39,4 +39,4 @@ package() {
 
 # vim:set ts=2 sw=2 et:
 sha256sums=('SKIP'
-            '373830e03fbef3ff7c92da24e8f36e799a8f4d37ab2aef6b3b6a063108b4f5fa')
+            '9261145e259f0c3ac2a69983f9e8671b967af9da6043723eaf1ccbe64e132ed5')
