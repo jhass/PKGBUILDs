@@ -1,0 +1,51 @@
+# Maintainer: Jonne Haß <me@mrzyx.de>
+pkgname=crystal
+pkgver=0.5.0
+pkgrel=1
+pkgdesc="The Crystal Programming Language"
+arch=('x86_64')
+url="http://crystal-lang.org"
+license=('Apache')
+depends=('libunwind' 'gc' 'llvm' 'libatomic_ops' 'pcre')
+checkdepends=('libyaml')
+optdepends=('libyaml: For YAML support')
+conflicts=('crystal-git')
+source=("https://github.com/manastech/crystal/releases/download/$pkgver/$pkgname-$pkgver-1.x86_64.tar.gz"
+        "https://github.com/manastech/crystal/archive/$pkgver.tar.gz"
+        "crystal.sh")
+
+prepare() {
+  mkdir -p "$srcdir/$pkgname-$pkgver/deps"
+  cp "$srcdir/$pkgname/embedded/bin/crystal" "$srcdir/$pkgname-$pkgver/deps/crystal"
+  sha=$(grep git: "$srcdir/crystal/version-manifest.txt" | cut -d ':' -f2 | head -c 8)
+  sed -e "s/#{tag}/$pkgver/" -e "s/#{sha}/$sha/" -i "$srcdir/$pkgname-$pkgver/src/compiler/crystal/version.cr"
+}
+
+build() {
+  cd "$srcdir/$pkgname-$pkgver"
+  make release=1
+}
+
+check() {
+  cd "$srcdir/$pkgname-$pkgver"
+  make spec
+}
+
+package() {
+  cd "$srcdir/$pkgname-$pkgver"
+  # /usr/bin/crystal wrapper script ensuring right environment, ideally the executable would have compiled in defaults. Maybe provide profile.d file instead
+  # /usr/lib/crystal/crystal compiled executable
+  # /usr/lib/crystal/src compiler src & core libs
+  # /usr/lib/cystal/libs stdlib
+  # /usr/share/doc/crystal/samples samples
+  install -Dm755 "$srcdir/crystal.sh" "$pkgdir/usr/bin/crystal"
+  install -dm755 "$pkgdir/usr/lib/crystal"
+  install -Dm755 ".build/crystal" "$pkgdir/usr/lib/crystal/crystal"
+  cp -rv src "$pkgdir/usr/lib/crystal/"
+  cp -rv libs "$pkgdir/usr/lib/crystal/"
+  install -dm755 "$pkgdir/usr/share/doc/crystal"
+  cp -rv samples "$pkgdir/usr/share/doc/crystal/"
+}
+sha256sums=('66f79296c07d3a45fa10cc386cf3bbc947ba3805077070d0edabef42c160ab2e'
+            '526b00a228c1345cfd4a118009be4d6cb002292ba0c95afd832e2c84cbc86b02'
+            '4f5a3bb7b70d3c7cc5ec89ed6109d52d93871eed0c33095d11b63da7ddb724ca')
