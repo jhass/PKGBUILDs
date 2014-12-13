@@ -1,6 +1,6 @@
 # Maintainer: Jonne Haß <me@jhass.eu>
 pkgname=crystal
-pkgver=0.5.2
+pkgver=0.5.5
 pkgrel=1
 pkgdesc="The Crystal Programming Language"
 arch=('x86_64')
@@ -13,40 +13,39 @@ optdepends=('libyaml: For YAML support'
             'libpcl: For coroutine (Fiber) support')
 conflicts=('crystal-git')
 source=("https://github.com/manastech/crystal/releases/download/$pkgver/$pkgname-$pkgver-1-linux-x86_64.tar.gz"
-        "https://github.com/manastech/crystal/archive/$pkgver.tar.gz"
-        "crystal.sh")
+        "https://github.com/manastech/crystal/archive/$pkgver.tar.gz")
 
 build() {
   cd "$srcdir/$pkgname-$pkgver"
   make release=1 \
        PATH="$PATH:$srcdir/$pkgname-$pkgver-1/bin" \
-       CRYSTAL_PATH="$srcdir/$pkgname-$pkgver/src:$srcdir/$pkgname-$pkgver/libs" \
+       CRYSTAL_PATH="$srcdir/$pkgname-$pkgver/src" \
        CRYSTAL_CONFIG_VERSION="$pkgver" \
-       CRYSTAL_CONFIG_PATH="/usr/lib/crystal/src:/usr/lib/crystal/libs:src:libs"
+       CRYSTAL_CONFIG_PATH="libs:/usr/lib/crystal"
 }
 
 check() {
   cd "$srcdir/$pkgname-$pkgver"
-  CRYSTAL_PATH="$srcdir/$pkgname-$pkgver/src:$srcdir/$pkgname-$pkgver/libs" \
-  CRYSTAL_CONFIG_VERSION="$pkgver" \
-  .build/crystal spec/all_spec.cr 
+  # Workaround left-over CRYSTAL_BIN in Makefile
+  echo -e "#!/bin/sh\nexec \"\${CRYSTAL_BIN:-$srcdir/$pkgname-$pkgver/.build/crystal}\" \"\$@\"" > bin/crystal
+
+  make spec PATH="bin:$PATH" \
+            CRYSTAL_PATH="$srcdir/$pkgname-$pkgver/src" \
+            CRYSTAL_CONFIG_VERSION="$pkgver"
 }
 
 package() {
   cd "$srcdir/$pkgname-$pkgver"
-  # /usr/bin/crystal wrapper script applying CRYSTAL_BIN hack, let's hope we can drop that soon
   # /usr/lib/crystal/crystal compiled executable
-  # /usr/lib/crystal/src compiler src & core libs
-  # /usr/lib/cystal/libs stdlib
-  # /usr/share/doc/crystal/samples samples
-  install -Dm755 "$srcdir/crystal.sh" "$pkgdir/usr/bin/crystal"
-  install -dm755 "$pkgdir/usr/lib/crystal"
-  install -Dm755 ".build/crystal" "$pkgdir/usr/lib/crystal/crystal"
-  cp -rv src "$pkgdir/usr/lib/crystal/"
-  cp -rv libs "$pkgdir/usr/lib/crystal/"
+  # /usr/lib/crystal/ compiler src & core libs
+  # /usr/share/doc/crystal/samples/ samples
+
+
+  install -Dm755 ".build/crystal" "$pkgdir/usr/bin/crystal"
+  install -dm755 "$pkgdir/usr/lib"
+  cp -rv src "$pkgdir/usr/lib/crystal"
   install -dm755 "$pkgdir/usr/share/doc/crystal"
   cp -rv samples "$pkgdir/usr/share/doc/crystal/"
 }
-sha256sums=('feb8ae9b6c4a425cd0d7e8c99e051f109c851f18a52439443c544bd1a194eb6b'
-            '1f77b3c87f11c76180c06c7507c41292de8bb8e00665ed94a9fc8cf0c49dd23d'
-            'facb2ee77eae3627f7f2bd156bc249bb8cc907c98a28e06dd6bbe1cdcdc95121')
+sha256sums=('262b51ac5ed3666221ff246c8b17abb622185fdc16a31f9028dec346efb6233e'
+            '328d0cf85a289aac9d8bfa5f4bde920de36c5bc59a90f37b928e343a526ab79e')
