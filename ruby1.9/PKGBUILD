@@ -28,7 +28,7 @@ build() {
     --disable-rpath \
     --program-suffix=-1.9
 
-  make
+  make ruby
 }
 
 check() {
