@@ -1,0 +1,52 @@
+# Maintainer: Jonne Haß <me@jhass.eu>
+# Contributor: Mikkel Kroman <mk@maero.dk>
+
+pkgname=crystal-git
+pkgver=0.5.8.r17.gabceb33
+_last_release=0.5.8-1
+pkgrel=1
+pkgdesc="The Crystal Programming Language"
+arch=('x86_64')
+url="http://crystal-lang.org"
+license=('Apache')
+depends=('libunwind' 'gc' 'llvm' 'libatomic_ops' 'pcre')
+optdepends=('libyaml: For YAML support'
+            'gmp: For BigInt support'
+            'libpcl: For coroutine (Fiber) support')
+makedepends=('git')
+conflicts=('crystal')
+provides=('crystal')
+source=("https://github.com/manastech/crystal/releases/download/${_last_release/-*/}/${pkgname/-git/}-$_last_release-linux-x86_64.tar.gz"
+        'git://github.com/manastech/crystal.git')
+
+pkgver() {
+  cd "$srcdir/${pkgname/-git/}"
+  ( set -o pipefail
+    git describe --long --tags 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' ||
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  )
+}
+build() {
+  cd "$srcdir/${pkgname/-git/}"
+    make release=1 \
+       PATH="$PATH:$srcdir/$pkgname-$_last_release/bin" \
+       CRYSTAL_PATH="$srcdir/${pkgname/-git/}/src" \
+       CRYSTAL_CONFIG_PATH="libs:/usr/lib/crystal"
+}
+
+package() {
+  cd "$srcdir/${pkgname/-git/}"
+  # /usr/bin/crystal compiled executable
+  # /usr/lib/crystal/ compiler src & core libs
+  # /usr/share/doc/crystal/samples/ samples
+
+  install -Dm755 ".build/crystal" "$pkgdir/usr/bin/crystal"
+  install -dm755 "$pkgdir/usr/lib"
+  cp -rv src "$pkgdir/usr/lib/crystal"
+  install -dm755 "$pkgdir/usr/share/doc/crystal"
+  cp -rv samples "$pkgdir/usr/share/doc/crystal/"
+}
+
+# vim:set ts=2 sw=2 et:
+sha256sums=('42686970265e560c27c96850c04f7018765db3d3b71cc9bbae6deb1f09af7b3e'
+            'SKIP')
