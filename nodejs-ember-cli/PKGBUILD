@@ -1,0 +1,22 @@
+# Maintainer: Jonne Haß <me@jhass.eu>
+
+_npmname=ember-cli
+pkgname=nodejs-$_npmname
+pkgver=0.2.3
+pkgrel=1
+pkgdesc="The ember command line interface"
+arch=('any')
+url="http://emberjs.com/"
+license=('MIT')
+depends=('nodejs' 'npm')
+source=(https://registry.npmjs.org/$_npmname/-/$_npmname-$pkgver.tgz)
+noextract=($_npmname-$pkgver.tgz)
+sha256sums=('e3029818113e86a44d6dcd304af4c80458fe8c66ea5e3cc8b47176b90a503cba')
+
+package() {
+  cd "$srcdir"
+  local _npmdir="$pkgdir/usr/lib/node_modules/"
+  mkdir -p "$_npmdir"
+  cd "$_npmdir"
+  npm install --user root -g --prefix "$pkgdir/usr" $_npmname@$pkgver
+}
