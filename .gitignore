@@ -1,0 +1,6 @@
+*/src
+*/pkg
+*.tar*
+*.gem
+*.rock
+*.jar
