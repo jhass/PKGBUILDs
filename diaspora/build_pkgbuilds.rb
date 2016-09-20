@@ -4,7 +4,7 @@ require "fileutils"
 
 include FileUtils
 
-VERSION = "0.6.0.0"
+VERSION = "0.6.0.1"
 PACKAGES = [
   {
     db: "mysql",
@@ -75,7 +75,7 @@ PACKAGES.each do |package|
   cp "diaspora.tmpfiles.d.conf", root_path.join("diaspora.tmpfiles.d.conf")
   Dir.chdir(root_path) do
     system "updpkgsums"
-    system "makepkg -sfc"
+    system "makepkg -sfco"
     system "mksrcinfo"
     system "git add ."
   end
