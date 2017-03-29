@@ -4,7 +4,7 @@ require "fileutils"
 
 include FileUtils
 
-VERSION = "0.6.4.0"
+VERSION = "0.6.4.1"
 PACKAGES = [
   {
     db: "mysql",
@@ -76,7 +76,7 @@ PACKAGES.each do |package|
   Dir.chdir(root_path) do
     system "updpkgsums"
     system "makepkg -sfco"
-    system "mksrcinfo"
+    system "makepkg --printsrcinfo > .SRCINFO"
     system "git add ."
   end
 end
