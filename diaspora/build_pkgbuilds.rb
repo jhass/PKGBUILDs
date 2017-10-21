@@ -4,7 +4,7 @@ require "fileutils"
 
 include FileUtils
 
-VERSION = "0.7.0.1"
+VERSION = "0.7.1.0"
 PACKAGES = [
   {
     db: "mysql",
