@@ -7,7 +7,7 @@ arch=('i686' 'x86_64')
 url="https://diasporafoundation.org"
 license=('AGPL3')
 depends=('ruby2.3' 'ruby2.3-bundler' 'redis' 'imagemagick' 'libxslt' 'net-tools' 'gsfonts' 'libtirpc' <%= additional_depends %>)
-optdepends=(<%= additional_optdepends %>)
+optdepends=('jemalloc: lower memory consumption' <%= additional_optdepends %>)
 makedepends=('nodejs')
 conflicts=(<%= (%w('diaspora-mysql' 'diaspora-postgresql' 'diaspora-mysql-git' 'diaspora-postgresql-git')-["'#{package_name}'"]).join(" ") %>)
 options=(!strip)
