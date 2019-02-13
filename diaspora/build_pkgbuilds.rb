@@ -51,6 +51,7 @@ PACKAGES = [
 def render_pkgbuild(package)
   db, git, additional_description, additional_depends, additional_optdepends, source, source_dir =
     package.values_at(:db, :git, :additional_description, :additional_depends, :additional_optdepends, :source, :source_dir)
+  additional_makedepends = "'git'" if git
   version = VERSION
   package_name = "diaspora-#{db}#{"-git" if git}"
 
