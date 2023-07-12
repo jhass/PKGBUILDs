@@ -4,9 +4,11 @@ require "fileutils"
 
 include FileUtils
 
-VERSION = "0.7.18.1"
+VERSION = "0.7.18.2"
 PACKAGES = [
   {
+    ruby_version: "2.7",
+    bundler_version: "2.1.4",
     db: "mysql",
     db_service: "mariadb.service",
     git: false,
@@ -17,6 +19,8 @@ PACKAGES = [
     source_dir: "diaspora-#{VERSION}"
   },
   {
+    ruby_version: "2.7",
+    bundler_version: "2.1.4",
     db: "postgresql",
     db_service: "postgresql.service",
     git: false,
@@ -27,6 +31,7 @@ PACKAGES = [
     source_dir: "diaspora-#{VERSION}"
   },
   {
+    bundler_version: "2.3.18",
     db: "mysql",
     db_service: "mariadb.service",
     git: true,
@@ -37,6 +42,7 @@ PACKAGES = [
     source_dir: "diaspora"
   },
   {
+    bundler_version: "2.3.18",
     db: "postgresql",
     db_service: "postgresql.service",
     git: true,
@@ -49,12 +55,12 @@ PACKAGES = [
 ]
 
 def render_pkgbuild(package)
-  db, git, additional_description, additional_depends, additional_optdepends, source, source_dir =
-    package.values_at(:db, :git, :additional_description, :additional_depends, :additional_optdepends, :source, :source_dir)
+  db, git, additional_description, additional_depends, additional_optdepends, source, source_dir, ruby_version, bundler_version  =
+    package.values_at(:db, :git, :additional_description, :additional_depends, :additional_optdepends, :source, :source_dir, :ruby_version, :bundler_version)
   additional_makedepends = "'git'" if git
   version = VERSION
   package_name = "diaspora-#{db}#{"-git" if git}"
-
+  ruby_suffix = "-#{ruby_version}" if ruby_version
   ERB.new(File.read("PKGBUILD.erb")).result(binding)
 end
 
