@@ -1,12 +1,12 @@
 # Maintainer: Jonne Haß <me@jhass.eu>
 pkgname='diaspora-postgresql-git'
-pkgver=0.7.18.2.r759.g744f5449f
+pkgver=0.9.0.0.r13.gc2589f10c
 pkgrel=1
 pkgdesc="A distributed privacy aware social network (development head) (PostgreSQL)"
 arch=('i686' 'x86_64')
 url="https://diasporafoundation.org"
 license=('AGPL3')
-depends=('ruby' 'redis' 'imagemagick' 'libxslt' 'net-tools' 'gsfonts' 'libtirpc' 'postgresql-libs')
+depends=('ruby' 'ruby-bundler' 'ruby-erb' 'redis' 'imagemagick' 'libidn' 'libxslt' 'net-tools' 'gsfonts' 'libtirpc' 'postgresql-libs')
 optdepends=('jemalloc: lower memory consumption' 'postgresql: Database server')
 makedepends=('nodejs' 'yarn' 'git')
 conflicts=('diaspora-mysql' 'diaspora-postgresql' 'diaspora-mysql-git')
@@ -62,21 +62,24 @@ build() {
   msg "Setup build directory"
   rm -rf $_builddir
   mkdir -p $_builddir
-  cp -Rf $srcdir/diaspora/{bin,app,config,db,public,lib,script,vendor,config.ru,Gemfile,Gemfile.lock,Rakefile} $_builddir
-  cp $srcdir/diaspora/{package.json,yarn.lock} $_builddir
+  cp -Rf $srcdir/diaspora/{bin,app,config,db,public,lib,script,vendor,config.ru,Gemfile,Gemfile.lock,Rakefile,package.json,yarn.lock} $_builddir
 
   cd $_builddir
 
   msg "Bundle dependencies"
   echo "gem: --no-rdoc --no-ri --no-user-install" > $_builddir/.gemrc
   export GEM_HOME="$_builddir/vendor/bundle"
-  HOME=$_builddir $_gem install bundler -v 2.3.18
+  HOME=$_builddir $_gem install bundler -v 2.5.9
   HOME=$_builddir $_bundle config --local path vendor/bundle
   HOME=$_builddir $_bundle config --local frozen 1
   HOME=$_builddir $_bundle config --local disable_shared_gems true
   HOME=$_builddir $_bundle config --local with postgresql
   HOME=$_builddir $_bundle config --local without development:test
   HOME=$_builddir C_INCLUDE_PATH=/usr/include:/usr/include/tirpc $_bundle install
+
+
+  # Workaround libsass.so not being found
+  ln -s ../../../../extensions/x86_64-linux/3.3.0/sassc-2.4.0/sassc/libsass.so $_builddir/vendor/bundle/ruby/3.3.0/gems/sassc-2.4.0/lib/sassc/libsass.so
 
   msg "Patch configuration examples"
   sed -i -e 's|#certificate_authorities = "/etc/ssl/certs/ca-certificates.crt"|certificate_authorities = "/etc/ssl/certs/ca-certificates.crt"|' \
