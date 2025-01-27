@@ -1,12 +1,12 @@
 # Maintainer: Jonne Haß <me@jhass.eu>
 pkgname='diaspora-mysql'
-pkgver=0.7.18.2
+pkgver=0.9.0.0
 pkgrel=1
-pkgdesc="A distributed privacy aware social network (MySQL)"
+pkgdesc="A distributed privacy aware social network (MariaDB/MySQL)"
 arch=('i686' 'x86_64')
 url="https://diasporafoundation.org"
 license=('AGPL3')
-depends=('ruby2.7' 'redis' 'imagemagick' 'libxslt' 'net-tools' 'gsfonts' 'libtirpc' 'libmariadbclient')
+depends=('ruby' 'ruby-bundler' 'ruby-erb' 'redis' 'imagemagick' 'libidn' 'libxslt' 'net-tools' 'gsfonts' 'libtirpc' 'libmariadbclient')
 optdepends=('jemalloc: lower memory consumption' 'mariadb: Database server')
 makedepends=('nodejs' 'yarn' )
 conflicts=('diaspora-postgresql' 'diaspora-mysql-git' 'diaspora-postgresql-git')
@@ -46,10 +46,10 @@ _reset_ruby() {
 }
 
 build() {
-  _bundle=bundle-2.7
-  _ruby=ruby-2.7
-  _rake=rake-2.7
-  _gem=gem-2.7
+  _bundle=bundle
+  _ruby=ruby
+  _rake=rake
+  _gem=gem
   _builddir=$srcdir/build
 
   _reset_ruby
@@ -57,21 +57,24 @@ build() {
   msg "Setup build directory"
   rm -rf $_builddir
   mkdir -p $_builddir
-  cp -Rf $srcdir/diaspora-0.7.18.2/{bin,app,config,db,public,lib,script,vendor,config.ru,Gemfile,Gemfile.lock,Rakefile} $_builddir
-  
+  cp -Rf $srcdir/diaspora-0.9.0.0/{bin,app,config,db,public,lib,script,vendor,config.ru,Gemfile,Gemfile.lock,Rakefile,package.json,yarn.lock} $_builddir
 
   cd $_builddir
 
   msg "Bundle dependencies"
   echo "gem: --no-rdoc --no-ri --no-user-install" > $_builddir/.gemrc
   export GEM_HOME="$_builddir/vendor/bundle"
-  HOME=$_builddir $_gem install bundler -v 2.1.4
+  HOME=$_builddir $_gem install bundler -v 2.5.9
   HOME=$_builddir $_bundle config --local path vendor/bundle
   HOME=$_builddir $_bundle config --local frozen 1
   HOME=$_builddir $_bundle config --local disable_shared_gems true
   HOME=$_builddir $_bundle config --local with mysql
   HOME=$_builddir $_bundle config --local without development:test
   HOME=$_builddir C_INCLUDE_PATH=/usr/include:/usr/include/tirpc $_bundle install
+
+
+  # Workaround libsass.so not being found
+  ln -s ../../../../extensions/x86_64-linux/3.3.0/sassc-2.4.0/sassc/libsass.so $_builddir/vendor/bundle/ruby/3.3.0/gems/sassc-2.4.0/lib/sassc/libsass.so
 
   msg "Patch configuration examples"
   sed -i -e 's|#certificate_authorities = "/etc/ssl/certs/ca-certificates.crt"|certificate_authorities = "/etc/ssl/certs/ca-certificates.crt"|' \
@@ -95,8 +98,8 @@ build() {
 }
 
 package() {
-  _bundle=bundle-2.7
-  _ruby=ruby-2.7
+  _bundle=bundle
+  _ruby=ruby
   _builddir=$srcdir/build
 
   msg "Copy contents to package directory"
@@ -138,7 +141,7 @@ package() {
   ln -sf /var/log/diaspora                     $pkgdir/usr/share/webapps/diaspora/log
 }
 
-sha256sums=('0b5828aa45af2361bfda4cd0f1e97070c322d90f1d16416bae2cba2418af9930'
+sha256sums=('11c79d8cc86412f0a94de62f5a8cc115428d978333c6129c96bbf44f39adc31d'
             'aae126c4b1bcba6265d3d925dc3845bb034defa5606385c22dfb053111b57685'
             '2ac3ef6c4f0396b7738b18d07c56f57e0db5e5e194bf8b07ffd6ad790dd92e17'
             '7128024976c95d511d8995c472907fe0b8c36fe5b45fef57fc053e3fadcae408'

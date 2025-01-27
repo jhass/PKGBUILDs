@@ -6,7 +6,7 @@ pkgdesc="A distributed privacy aware social network <%= additional_description %
 arch=('i686' 'x86_64')
 url="https://diasporafoundation.org"
 license=('AGPL3')
-depends=('ruby<%= ruby_version %>' 'redis' 'imagemagick' 'libxslt' 'net-tools' 'gsfonts' 'libtirpc' <%= additional_depends %>)
+depends=('ruby<%= ruby_version %>' 'ruby-bundler' 'ruby-erb' 'redis' 'imagemagick' 'libidn' 'libxslt' 'net-tools' 'gsfonts' 'libtirpc' <%= additional_depends %>)
 optdepends=('jemalloc: lower memory consumption' <%= additional_optdepends %>)
 makedepends=('nodejs' 'yarn' <%= additional_makedepends %>)
 conflicts=(<%= (%w('diaspora-mysql' 'diaspora-postgresql' 'diaspora-mysql-git' 'diaspora-postgresql-git')-["'#{package_name}'"]).join(" ") %>)
@@ -62,8 +62,7 @@ build() {
   msg "Setup build directory"
   rm -rf $_builddir
   mkdir -p $_builddir
-  cp -Rf $srcdir/<%= source_dir %>/{bin,app,config,db,public,lib,script,vendor,config.ru,Gemfile,Gemfile.lock,Rakefile} $_builddir
-  <% if git %>cp $srcdir/<%= source_dir %>/{package.json,yarn.lock} $_builddir<% end %>
+  cp -Rf $srcdir/<%= source_dir %>/{bin,app,config,db,public,lib,script,vendor,config.ru,Gemfile,Gemfile.lock,Rakefile,package.json,yarn.lock} $_builddir
 
   cd $_builddir
 
@@ -77,6 +76,10 @@ build() {
   HOME=$_builddir $_bundle config --local with <%= db %>
   HOME=$_builddir $_bundle config --local without development:test
   HOME=$_builddir C_INCLUDE_PATH=/usr/include:/usr/include/tirpc $_bundle install
+
+
+  # Workaround libsass.so not being found
+  ln -s ../../../../extensions/x86_64-linux/3.3.0/sassc-2.4.0/sassc/libsass.so $_builddir/vendor/bundle/ruby/3.3.0/gems/sassc-2.4.0/lib/sassc/libsass.so
 
   msg "Patch configuration examples"
   sed -i -e 's|#certificate_authorities = "/etc/ssl/certs/ca-certificates.crt"|certificate_authorities = "/etc/ssl/certs/ca-certificates.crt"|' \

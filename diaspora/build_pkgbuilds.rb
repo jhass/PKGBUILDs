@@ -4,23 +4,23 @@ require "fileutils"
 
 include FileUtils
 
-VERSION = "0.7.18.2"
+VERSION = "0.9.0.0"
 PACKAGES = [
   {
-    ruby_version: "2.7",
-    bundler_version: "2.1.4",
+    ruby_version: nil, # Main package, Ruby 3.3
+    bundler_version: "2.5.9",
     db: "mysql",
     db_service: "mariadb.service",
     git: false,
-    additional_description: "(MySQL)",
+    additional_description: "(MariaDB/MySQL)",
     additional_depends: "'libmariadbclient'",
     additional_optdepends: "'mariadb: Database server'",
     source: "diaspora-${pkgver}.tar.gz::https://github.com/diaspora/diaspora/archive/v${pkgver}.tar.gz",
     source_dir: "diaspora-#{VERSION}"
   },
   {
-    ruby_version: "2.7",
-    bundler_version: "2.1.4",
+    ruby_version: nil, # Main package, Ruby 3.3
+    bundler_version: "2.5.9",
     db: "postgresql",
     db_service: "postgresql.service",
     git: false,
@@ -31,7 +31,8 @@ PACKAGES = [
     source_dir: "diaspora-#{VERSION}"
   },
   {
-    bundler_version: "2.3.18",
+    ruby_version: nil, # Main package, Ruby 3.3
+    bundler_version: "2.5.9",
     db: "mysql",
     db_service: "mariadb.service",
     git: true,
@@ -42,7 +43,8 @@ PACKAGES = [
     source_dir: "diaspora"
   },
   {
-    bundler_version: "2.3.18",
+    ruby_version: nil, # Main package, Ruby 3.3
+    bundler_version: "2.5.9",
     db: "postgresql",
     db_service: "postgresql.service",
     git: true,
