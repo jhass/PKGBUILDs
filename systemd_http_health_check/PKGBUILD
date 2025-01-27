@@ -1,6 +1,6 @@
 # Maintainer: Jonne Haß <me@jhass.eu>
 pkgname=systemd_http_health_check
-pkgver=0.1.1
+pkgver=0.2.0
 pkgrel=1
 pkgdesc="A companion daemon to notify systemd about the health of a HTTP server" 
 arch=('x86_64')
@@ -25,4 +25,4 @@ package() {
   install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
   install -Dm755 bin/$pkgname "$pkgdir/usr/bin/$pkgname"
 }
-sha256sums=('1f63891a22a22f82df7ac9609891e374ee5b4c21aefcccd1fcbd1f172340bc52')
+sha256sums=('73e323d124082fd15857d0446464b1e5ccd3dc8d33304c0fee56c3f30e014f0f')
