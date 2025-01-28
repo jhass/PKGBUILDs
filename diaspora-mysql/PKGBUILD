@@ -1,7 +1,7 @@
 # Maintainer: Jonne Haß <me@jhass.eu>
 pkgname='diaspora-mysql'
 pkgver=0.9.0.0
-pkgrel=1
+pkgrel=2
 pkgdesc="A distributed privacy aware social network (MariaDB/MySQL)"
 arch=('i686' 'x86_64')
 url="https://diasporafoundation.org"
@@ -48,7 +48,6 @@ _reset_ruby() {
 build() {
   _bundle=bundle
   _ruby=ruby
-  _rake=rake
   _gem=gem
   _builddir=$srcdir/build
 
@@ -57,14 +56,14 @@ build() {
   msg "Setup build directory"
   rm -rf $_builddir
   mkdir -p $_builddir
-  cp -Rf $srcdir/diaspora-0.9.0.0/{bin,app,config,db,public,lib,script,vendor,config.ru,Gemfile,Gemfile.lock,Rakefile,package.json,yarn.lock} $_builddir
+  cp -Rf $srcdir/diaspora-0.9.0.0/{bin,app,config,db,public,lib,script,vendor,config.ru,Gemfile,Gemfile.lock,Rakefile,package.json,yarn.lock,.foreman,Procfile} $_builddir
 
   cd $_builddir
 
   msg "Bundle dependencies"
   echo "gem: --no-rdoc --no-ri --no-user-install" > $_builddir/.gemrc
-  export GEM_HOME="$_builddir/vendor/bundle"
-  HOME=$_builddir $_gem install bundler -v 2.5.9
+  export GEM_HOME="$_builddir/vendor/bundle" \
+         BUNDLE_GEMFILE="$_builddir/Gemfile"
   HOME=$_builddir $_bundle config --local path vendor/bundle
   HOME=$_builddir $_bundle config --local frozen 1
   HOME=$_builddir $_bundle config --local disable_shared_gems true
@@ -72,6 +71,8 @@ build() {
   HOME=$_builddir $_bundle config --local without development:test
   HOME=$_builddir C_INCLUDE_PATH=/usr/include:/usr/include/tirpc $_bundle install
 
+  # Enforce bundler binstubs
+  $_bundle binstubs bundler foreman puma sidekiq rake rails --force
 
   # Workaround libsass.so not being found
   ln -s ../../../../extensions/x86_64-linux/3.3.0/sassc-2.4.0/sassc/libsass.so $_builddir/vendor/bundle/ruby/3.3.0/gems/sassc-2.4.0/lib/sassc/libsass.so
@@ -89,17 +90,15 @@ build() {
   cp $_builddir/config/database.yml{.example,}
 
   msg "Create secret token"
-  HOME=$_builddir RAILS_ENV=production $_bundle exec $_rake generate:secret_token
+  HOME=$_builddir RAILS_ENV=production bin/bundle exec rake generate:secret_token
 
   msg "Precompile assets"
-  HOME=$_builddir RAILS_ENV=production $_bundle exec $_rake assets:precompile
+  HOME=$_builddir RAILS_ENV=production bin/bundle exec rake assets:precompile
 
   rm $_builddir/config/{diaspora.toml,database.yml}
 }
 
 package() {
-  _bundle=bundle
-  _ruby=ruby
   _builddir=$srcdir/build
 
   msg "Copy contents to package directory"
@@ -107,6 +106,7 @@ package() {
   cp -Rf $_builddir/* $pkgdir/usr/share/webapps/diaspora/
   cp -Rf $_builddir/.bundle $pkgdir/usr/share/webapps/diaspora/
   install -Dm644 $_builddir/.gemrc $pkgdir/usr/share/webapps/diaspora/.gemrc
+  install -Dm644 $_builddir/.foreman $pkgdir/usr/share/webapps/diaspora/.foreman
   install -Dm640 $_builddir/config/initializers/secret_token.rb $pkgdir/etc/webapps/diaspora/secret_token.rb
   install -Dm644 $srcdir/diaspora.service $pkgdir/usr/lib/systemd/system/diaspora.service
   install -Dm644 $srcdir/diaspora.tmpfiles.d.conf $pkgdir/usr/lib/tmpfiles.d/diaspora.conf
@@ -116,11 +116,6 @@ package() {
   msg "Build source.tar.gz to conform the AGPL"
   tar czf $pkgdir/usr/share/webapps/diaspora/public/source.tar.gz \
           $pkgdir/usr/share/webapps/diaspora/{app,db,lib,script,Gemfile,Gemfile.lock,Rakefile,config.ru}
-
-  msg "Symlink ruby and bundle"
-  install -dm755           $pkgdir/usr/share/webapps/diaspora/bin
-  ln -sf /usr/bin/$_ruby   $pkgdir/usr/share/webapps/diaspora/bin/ruby
-  ln -sf /usr/bin/$_bundle $pkgdir/usr/share/webapps/diaspora/bin/bundle
 
   msg "Prepare configuration files"
   install -dm750 $pkgdir/etc/webapps/diaspora
@@ -145,5 +140,5 @@ sha256sums=('11c79d8cc86412f0a94de62f5a8cc115428d978333c6129c96bbf44f39adc31d'
             'aae126c4b1bcba6265d3d925dc3845bb034defa5606385c22dfb053111b57685'
             '2ac3ef6c4f0396b7738b18d07c56f57e0db5e5e194bf8b07ffd6ad790dd92e17'
             '7128024976c95d511d8995c472907fe0b8c36fe5b45fef57fc053e3fadcae408'
-            '77cb2529eacef2d1e77aad5daf21856f67097d6342f230e5dd5057f753932bfa'
+            '8a174c2a64aff5fe72ca6b61bb05c5d85f4cd5cbb91aa3a0334e8c5a15b45bd3'
             '29cfd5116e919d8851ff70b8b82af8d4a6c8243a9d1ca555981a1a695e2d7715')

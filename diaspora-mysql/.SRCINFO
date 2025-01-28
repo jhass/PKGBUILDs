@@ -1,7 +1,7 @@
 pkgbase = diaspora-mysql
 	pkgdesc = A distributed privacy aware social network (MariaDB/MySQL)
 	pkgver = 0.9.0.0
-	pkgrel = 1
+	pkgrel = 2
 	url = https://diasporafoundation.org
 	install = diaspora.install
 	arch = i686
@@ -40,7 +40,7 @@ pkgbase = diaspora-mysql
 	sha256sums = aae126c4b1bcba6265d3d925dc3845bb034defa5606385c22dfb053111b57685
 	sha256sums = 2ac3ef6c4f0396b7738b18d07c56f57e0db5e5e194bf8b07ffd6ad790dd92e17
 	sha256sums = 7128024976c95d511d8995c472907fe0b8c36fe5b45fef57fc053e3fadcae408
-	sha256sums = 77cb2529eacef2d1e77aad5daf21856f67097d6342f230e5dd5057f753932bfa
+	sha256sums = 8a174c2a64aff5fe72ca6b61bb05c5d85f4cd5cbb91aa3a0334e8c5a15b45bd3
 	sha256sums = 29cfd5116e919d8851ff70b8b82af8d4a6c8243a9d1ca555981a1a695e2d7715
 
 pkgname = diaspora-mysql

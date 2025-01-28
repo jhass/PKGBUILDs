@@ -8,7 +8,6 @@ VERSION = "0.9.0.0"
 PACKAGES = [
   {
     ruby_version: nil, # Main package, Ruby 3.3
-    bundler_version: "2.5.9",
     db: "mysql",
     db_service: "mariadb.service",
     git: false,
@@ -20,7 +19,6 @@ PACKAGES = [
   },
   {
     ruby_version: nil, # Main package, Ruby 3.3
-    bundler_version: "2.5.9",
     db: "postgresql",
     db_service: "postgresql.service",
     git: false,
@@ -32,7 +30,6 @@ PACKAGES = [
   },
   {
     ruby_version: nil, # Main package, Ruby 3.3
-    bundler_version: "2.5.9",
     db: "mysql",
     db_service: "mariadb.service",
     git: true,
@@ -44,7 +41,6 @@ PACKAGES = [
   },
   {
     ruby_version: nil, # Main package, Ruby 3.3
-    bundler_version: "2.5.9",
     db: "postgresql",
     db_service: "postgresql.service",
     git: true,
@@ -57,8 +53,8 @@ PACKAGES = [
 ]
 
 def render_pkgbuild(package)
-  db, git, additional_description, additional_depends, additional_optdepends, source, source_dir, ruby_version, bundler_version  =
-    package.values_at(:db, :git, :additional_description, :additional_depends, :additional_optdepends, :source, :source_dir, :ruby_version, :bundler_version)
+  db, git, additional_description, additional_depends, additional_optdepends, source, source_dir, ruby_version, =
+    package.values_at(:db, :git, :additional_description, :additional_depends, :additional_optdepends, :source, :source_dir, :ruby_version)
   additional_makedepends = "'git'" if git
   version = VERSION
   package_name = "diaspora-#{db}#{"-git" if git}"
