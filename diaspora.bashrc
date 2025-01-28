@@ -1,3 +1,5 @@
 export HOME=/usr/share/webapps/diaspora \
-       RAILS_ENV=production
-export PATH=$HOME/bin:$PATH
+       RAILS_ENV=production \
+       GEM_HOME=/usr/share/webapps/diaspora/vendor/bundle \
+       BUNDLE_GEMFILE=/usr/share/webapps/diaspora/Gemfile \
+       PATH=$HOME/bin:$PATH
