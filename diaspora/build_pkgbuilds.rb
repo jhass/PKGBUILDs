@@ -4,10 +4,10 @@ require "fileutils"
 
 include FileUtils
 
-VERSION = "0.9.0.0"
+VERSION = "0.9.1.0"
 PACKAGES = [
   {
-    ruby_version: nil, # Main package, Ruby 3.3
+    ruby_version: nil, # Main package, Ruby 3.4
     db: "mysql",
     db_service: "mariadb.service",
     git: false,
@@ -18,7 +18,7 @@ PACKAGES = [
     source_dir: "diaspora-#{VERSION}"
   },
   {
-    ruby_version: nil, # Main package, Ruby 3.3
+    ruby_version: nil, # Main package, Ruby 3.4
     db: "postgresql",
     db_service: "postgresql.service",
     git: false,
@@ -29,7 +29,7 @@ PACKAGES = [
     source_dir: "diaspora-#{VERSION}"
   },
   {
-    ruby_version: nil, # Main package, Ruby 3.3
+    ruby_version: nil, # Main package, Ruby 3.4
     db: "mysql",
     db_service: "mariadb.service",
     git: true,
@@ -40,7 +40,7 @@ PACKAGES = [
     source_dir: "diaspora"
   },
   {
-    ruby_version: nil, # Main package, Ruby 3.3
+    ruby_version: nil, # Main package, Ruby 3.4
     db: "postgresql",
     db_service: "postgresql.service",
     git: true,
