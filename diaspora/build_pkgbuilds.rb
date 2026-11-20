@@ -4,7 +4,7 @@ require "fileutils"
 
 include FileUtils
 
-VERSION = "0.9.1.0"
+VERSION = "0.10.1"
 PACKAGES = [
   {
     ruby_version: nil, # Main package, Ruby 3.4
